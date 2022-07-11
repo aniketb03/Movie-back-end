@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT;
 app.use(express.json());
 // const movies = [
 
@@ -91,7 +91,7 @@ async function createConnection() {
 const client = await createConnection();
 
 app.get("/", function (request, response) {
-    response.send('Hello World☠️');
+    response.send('🎊Welcome to the Guvi-Node-App🎊');
 });
 // Movies
 app.get("/movies", async function (request, response) {
