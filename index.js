@@ -89,7 +89,7 @@ async function createConnection() {
 }
 
 const client = await createConnection();
-
+// Welcome Page
 app.get("/", function (request, response) {
     response.send('🎊Welcome to the Guvi-Node-App🎊');
 });
@@ -106,7 +106,7 @@ app.get("/movies", async function (request, response) {
     const Movies = await client.db("guvi-node-app").collection("movies").find(request.query).toArray();
     response.send(Movies);
 });
-
+// Get Movies by ID
 app.get("/movies/:id", async function (request, response) {
     const { id } = request.params;
     console.log(request.params, id);
@@ -116,7 +116,8 @@ app.get("/movies/:id", async function (request, response) {
     console.log(movie);
     movie ? response.send(movie) : response.status(404).send("Error: Movie not found ");
 });
-// [Inbuilt] Middleware -->(express.json()) converts body to JSON
+/* [Inbuilt] Middleware -->(express.json()) converts body to JSON
+ Create Movies by ID */
 app.post("/movies", async function (request, response) {
     const data = request.body;
     console.log(data);
@@ -125,5 +126,27 @@ app.post("/movies", async function (request, response) {
 
     response.send(result);
 });
+// Delete movies by ID
+app.delete("/movies/:id", async function (request, response) {
+    const { id } = request.params;
+    console.log(request.params, id);
+    // db.movies.deleteOne({id:"101"});
+    const result = await client.db("guvi-node-app").collection("movies").deleteOne({ id: id });
+    // const movie = movies.find((mv) => mv.id == id);
+    console.log(result);
+    result.deletedCount > 0 ? response.send("Movie Deleted Succesfully☠️") : response.status(404).send("Error: Movie not found ");
+});
+/*  Update Rating by ID  */
+app.put("/movies/:id", async function (request, response) {
+    const { id } = request.params;
+    console.log(request.params, id);
+    const data = request.body;
+    // db.movies.updateOne({id:"101"},{$set:data});
+    const result = await client.db("guvi-node-app")
+        .collection("movies")
+        .updateOne({ id: id }, { $set: data });
+    response.send(result);
+});
+
 
 app.listen(PORT, () => console.log(`App started in ${PORT}`));
