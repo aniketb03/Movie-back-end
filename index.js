@@ -1,13 +1,16 @@
 import express from "express"; // Import 3rd Party Package
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import { moviesRouter } from "./routes/movies.js"
+import { usersRouter } from "./routes/users.js"
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
 app.use(express.json());
-// const movies = [
+
+/*const movies = [
 
 //     {
 //         "id": "100",
@@ -75,10 +78,10 @@ app.use(express.json());
 //         "trailer": "https://www.youtube.com/embed/NgsQ8mVkN8w"
 //     }
 // ];
-// app.use --> Intercept --> Applies express.json() (Inbuilt Middleware)
-
+// app.use --> Intercept --> Applies express.json() (Inbuilt Middleware) */
 
 // const MONGO_URL = "mongodb://127.0.0.1";
+
 const MONGO_URL = process.env.MONGO_URL;
 
 async function createConnection() {
@@ -88,65 +91,14 @@ async function createConnection() {
     return client;
 }
 
-const client = await createConnection();
+export const client = await createConnection();
 // Welcome Page
 app.get("/", function (request, response) {
     response.send('🎊Welcome to the Guvi-Node-App🎊');
 });
-// Movies
-app.get("/movies", async function (request, response) {
-    // db.movies.find({})
 
-    if (request.query.rating) {
-        request.query.rating = +request.query.rating;
-    }
-
-    console.log(request.query);
-    // Cursor - Pagination
-    const Movies = await client.db("guvi-node-app").collection("movies").find(request.query).toArray();
-    response.send(Movies);
-});
-// Get Movies by ID
-app.get("/movies/:id", async function (request, response) {
-    const { id } = request.params;
-    console.log(request.params, id);
-    // db.movies.findOne({id:"101"});
-    const movie = await client.db("guvi-node-app").collection("movies").findOne({ id: id });
-    // const movie = movies.find((mv) => mv.id == id);
-    console.log(movie);
-    movie ? response.send(movie) : response.status(404).send("Error: Movie not found ");
-});
-/* [Inbuilt] Middleware -->(express.json()) converts body to JSON
- Create Movies by ID */
-app.post("/movies", async function (request, response) {
-    const data = request.body;
-    console.log(data);
-    //db.movies.insertMany(data);
-    const result = await client.db("guvi-node-app").collection("movies").insertMany(data);
-
-    response.send(result);
-});
-// Delete movies by ID
-app.delete("/movies/:id", async function (request, response) {
-    const { id } = request.params;
-    console.log(request.params, id);
-    // db.movies.deleteOne({id:"101"});
-    const result = await client.db("guvi-node-app").collection("movies").deleteOne({ id: id });
-    // const movie = movies.find((mv) => mv.id == id);
-    console.log(result);
-    result.deletedCount > 0 ? response.send("Movie Deleted Succesfully☠️") : response.status(404).send("Error: Movie not found ");
-});
-/*  Update Rating by ID  */
-app.put("/movies/:id", async function (request, response) {
-    const { id } = request.params;
-    console.log(request.params, id);
-    const data = request.body;
-    // db.movies.updateOne({id:"101"},{$set:data});
-    const result = await client.db("guvi-node-app")
-        .collection("movies")
-        .updateOne({ id: id }, { $set: data });
-    response.send(result);
-});
-
+app.use("/movies", moviesRouter);
+app.use("/users", usersRouter);
 
 app.listen(PORT, () => console.log(`App started in ${PORT}`));
+
