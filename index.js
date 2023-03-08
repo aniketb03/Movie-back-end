@@ -1,8 +1,8 @@
 import express from "express"; // Import 3rd Party Package
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
-import { moviesRouter } from "./routes/movies.js"
-import { usersRouter } from "./routes/users.js"
+import { moviesRouter } from "./routes/movies.js";
+import { usersRouter } from "./routes/users.js";
 import cors from "cors";
 dotenv.config();
 
@@ -86,20 +86,19 @@ app.use(express.json());
 const MONGO_URL = process.env.MONGO_URL;
 
 async function createConnection() {
-    const client = new MongoClient(MONGO_URL);
-    await client.connect();
-    console.log("Mongo is Connected");
-    return client;
+  const client = new MongoClient(MONGO_URL);
+  await client.connect();
+  console.log("Mongo is Connected");
+  return client;
 }
 
 export const client = await createConnection();
 // Welcome Page
 app.get("/", function (request, response) {
-    response.send('🎊Welcome to the Guvi-Node-App🎊');
+  response.send("🎊Welcome to the Guvi-Node-App🎊");
 });
 
 app.use("/movies", moviesRouter);
 app.use("/users", usersRouter);
 
 app.listen(PORT, () => console.log(`App started in ${PORT}`));
-
