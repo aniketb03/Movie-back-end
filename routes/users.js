@@ -56,6 +56,7 @@ router.post("/login", async function (request, response) {
         message: "Successfully Login",
         token: token,
         id: userFromDB._id,
+        username:userFromDB.username,
       });
     } else {
       response.status(401).send({ message: "Invalid Credentials" });

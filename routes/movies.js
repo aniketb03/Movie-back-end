@@ -9,7 +9,7 @@ import {
 } from "./helper.js";
 const router = express.Router();
 // Movies
-router.get("/", async function (request, response) {
+router.get("/",auth, async function (request, response) {
   // db.movies.find({})
   if (request.query.rating) {
     request.query.rating = +request.query.rating;
@@ -33,7 +33,7 @@ router.get("/:id", async function (request, response) {
 });
 /* [Inbuilt] Middleware -->(express.json()) converts body to JSON
  Create Movies by ID */
-router.post("/", async function (request, response) {
+router.post("/",auth, async function (request, response) {
   const data = request.body;
   console.log(data);
   //db.movies.insertMany(data);
@@ -41,7 +41,7 @@ router.post("/", async function (request, response) {
   response.send(result);
 });
 // Delete movies by ID
-router.delete("/:id", async function (request, response) {
+router.delete("/:id", auth,async function (request, response) {
   const { id } = request.params;
   console.log(request.params, id);
   // db.movies.deleteOne({id:"101"});
@@ -53,7 +53,7 @@ router.delete("/:id", async function (request, response) {
     : response.status(404).send("Error: Movie not found ");
 });
 /*  Update Rating by ID  */
-router.put("/:id", async function (request, response) {
+router.put("/:id",auth, async function (request, response) {
   const { id } = request.params;
   console.log(request.params, id);
   const data = request.body;
